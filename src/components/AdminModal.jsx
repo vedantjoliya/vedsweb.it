@@ -12,7 +12,8 @@ export const AdminModal = () => {
     addProject,
     editProject,
     deleteProject,
-    resetData
+    resetData,
+    isCloudSyncing
   } = usePortfolio();
 
   const [passwordInput, setPasswordInput] = useState('');
@@ -97,7 +98,18 @@ export const AdminModal = () => {
               className="h-8 w-auto object-contain"
             />
             <div className="text-left">
-              <h3 className="font-display font-bold text-lg text-slate-900">VedsWeb Secret Admin Panel</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-display font-bold text-lg text-slate-900">VedsWeb Secret Admin Panel</h3>
+                {isCloudSyncing ? (
+                  <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-wider animate-pulse">
+                    Syncing to Server...
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
+                    Cloud Server Live
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-slate-500 font-medium">Manage live Framer websites & portfolio data</p>
             </div>
           </div>

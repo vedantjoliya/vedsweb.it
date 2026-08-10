@@ -446,12 +446,15 @@ const INITIAL_PROJECTS = [
   }
 ];
 
+const CLOUD_API_URL = 'https://jsonblob.com/api/jsonBlob/019feb0a-4e24-7ee1-80a9-af5c5645d64c';
+
 export const PortfolioProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
     const saved = localStorage.getItem('vedsweb_admin_projects_v6');
     return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
   });
 
+  const [isCloudSyncing, setIsCloudSyncing] = useState(false);
   const [currency, setCurrency] = useState('EUR');
   const [language, setLanguage] = useState('it');
   const [detectedCountry, setDetectedCountry] = useState('Italy');
@@ -465,6 +468,39 @@ export const PortfolioProvider = ({ children }) => {
   const t = (key) => {
     const currentDict = TRANSLATIONS[language] || TRANSLATIONS.it || TRANSLATIONS.en;
     return currentDict[key] || TRANSLATIONS.en[key] || key;
+  };
+
+  useEffect(() => {
+    const fetchCloudProjects = async () => {
+      try {
+        const res = await fetch(CLOUD_API_URL);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setProjects(data);
+            localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(data));
+          }
+        }
+      } catch (err) {
+        console.log('Cloud sync fetch error');
+      }
+    };
+    fetchCloudProjects();
+  }, []);
+
+  const saveToCloudServer = async (updatedProjects) => {
+    setIsCloudSyncing(true);
+    try {
+      await fetch(CLOUD_API_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedProjects)
+      });
+    } catch (err) {
+      console.log('Cloud server save error');
+    } finally {
+      setIsCloudSyncing(false);
+    }
   };
 
   const pricing = {
@@ -598,26 +634,33 @@ export const PortfolioProvider = ({ children }) => {
     return `${currObj.symbol}${rawAmount.toLocaleString()}`;
   };
 
-  const addProject = (newProj) => {
+  const addProject = async (newProj) => {
     const proj = {
       ...newProj,
       id: `proj-${Date.now()}`,
       devices: ['desktop', 'tablet', 'mobile']
     };
-    setProjects(prev => [proj, ...prev]);
+    const updated = [proj, ...projects];
+    setProjects(updated);
+    await saveToCloudServer(updated);
   };
 
-  const editProject = (id, updatedProj) => {
-    setProjects(prev => prev.map(p => p.id === id ? { ...p, ...updatedProj } : p));
+  const editProject = async (id, updatedProj) => {
+    const updated = projects.map(p => p.id === id ? { ...p, ...updatedProj } : p);
+    setProjects(updated);
+    await saveToCloudServer(updated);
   };
 
-  const deleteProject = (id) => {
-    setProjects(prev => prev.filter(p => p.id !== id));
+  const deleteProject = async (id) => {
+    const updated = projects.filter(p => p.id !== id);
+    setProjects(updated);
+    await saveToCloudServer(updated);
   };
 
-  const resetData = () => {
+  const resetData = async () => {
     setProjects(INITIAL_PROJECTS);
     localStorage.removeItem('vedsweb_admin_projects_v6');
+    await saveToCloudServer(INITIAL_PROJECTS);
   };
 
   const contactInfo = {
@@ -652,7 +695,8 @@ export const PortfolioProvider = ({ children }) => {
         resetData,
         selectedProject,
         setSelectedProject,
-        contactInfo
+        contactInfo,
+        isCloudSyncing
       }}
     >
       {children}
