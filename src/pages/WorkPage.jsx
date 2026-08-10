@@ -40,23 +40,20 @@ export const WorkPage = () => {
               >
                 {/* Preview Container */}
                 <div
-                  className="relative rounded-2xl overflow-hidden bg-white border border-[#1A1816]/10 aspect-video cursor-pointer shadow-vj-md shadow-vj-hover"
+                  className="relative rounded-2xl overflow-hidden bg-white border border-[#1A1816]/10 aspect-[16/10] sm:aspect-video cursor-pointer shadow-vj-md shadow-vj-hover"
                   onClick={() => setSelectedProject(project)}
                 >
-                  <div className="w-[calc(100%+32px)] h-full overflow-hidden">
-                    <iframe
-                      src={project.demoUrl}
-                      title={project.title}
-                      className="w-full h-full border-0 pointer-events-none"
-                      loading="lazy"
-                      sandbox="allow-scripts allow-same-origin"
-                    />
-                  </div>
+                  <iframe
+                    src={project.demoUrl}
+                    title={project.title}
+                    className="w-full h-full border-0 pointer-events-none transform scale-100 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin allow-forms"
+                  />
 
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-[#1A1816]/0 group-hover:bg-[#1A1816]/40 transition-all duration-500 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 flex items-center gap-3">
-                      <button className="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-[#1A1816] font-semibold text-xs hover:scale-105 transition-transform uppercase shadow-lg">
+                  <div className="absolute inset-0 bg-[#1A1816]/0 group-hover:bg-[#1A1816]/30 transition-all duration-500 flex items-center justify-center">
+                    <div className="opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-300 flex items-center gap-3">
+                      <button className="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-[#1A1816] font-semibold text-xs hover:scale-105 transition-transform uppercase shadow-xl font-body tracking-wider">
                         <Eye className="w-4 h-4 text-[#8B5CF6]" />
                         <span>{t('preview')}</span>
                       </button>
@@ -65,7 +62,7 @@ export const WorkPage = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-2 px-5 py-3 rounded-full bg-[#1A1816] text-white text-xs font-medium hover:bg-[#8B5CF6] transition-colors uppercase shadow-lg"
+                        className="flex items-center gap-2 px-5 py-3 rounded-full bg-[#1A1816] text-white text-xs font-medium hover:bg-[#8B5CF6] transition-colors uppercase shadow-xl font-body tracking-wider"
                       >
                         <span>{t('liveSite')}</span>
                         <ExternalLink className="w-3.5 h-3.5" />
