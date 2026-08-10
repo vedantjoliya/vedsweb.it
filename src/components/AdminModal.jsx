@@ -176,6 +176,18 @@ export const AdminModal = () => {
 
               <div className="flex items-center gap-2">
                 <button
+                  onClick={() => {
+                    const code = `const INITIAL_PROJECTS = ${JSON.stringify(projects, null, 2)};`;
+                    navigator.clipboard.writeText(code);
+                    alert('INITIAL_PROJECTS array copied to clipboard! You can paste this directly into PortfolioContext.jsx to update the server codebase for all devices worldwide.');
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>Copy Codebase Array</span>
+                </button>
+
+                <button
                   onClick={resetData}
                   className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 font-semibold"
                 >
