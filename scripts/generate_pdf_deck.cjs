@@ -44,46 +44,52 @@ async function buildPDF() {
   doc.fillColor('#71717A').fontSize(8.5).font('Helvetica').text('BESPOKE DIGITAL ENGINEERING & BRANDING', 320, 65, { align: 'right', width: 230 });
 
   // Main Luxury Title
-  doc.fillColor('#111111').fontSize(42).font('Times-Bold').text('The Official', 45, 130);
-  doc.fillColor('#111111').fontSize(42).font('Times-Italic').text('Agency Deck .', 45, 175);
+  doc.fillColor('#111111').fontSize(42).font('Times-Bold').text('The Official', 45, 120);
+  doc.fillColor('#111111').fontSize(42).font('Times-Italic').text('Agency Deck .', 45, 165);
 
   doc.fillColor('#52525B').fontSize(11).font('Helvetica').text(
     'A curated overview of our design methodology, transparent pricing structures, and live digital portfolio engineered for high-end global brands.',
     45,
-    240,
+    225,
     { width: 440, lineGap: 5 }
   );
 
-  // Minimal Founder Box
-  doc.roundedRect(45, 305, 505, 140, 12).fillAndStroke('#FFFFFF', '#E2E8F0');
-  doc.fillColor('#8B5CF6').fontSize(9).font('Helvetica-Bold').text('LEADERSHIP & CREATIVE DIRECTION', 70, 325);
-  doc.fillColor('#111111').fontSize(18).font('Times-Bold').text('Vedant Joliya', 70, 342);
-  doc.fillColor('#71717A').fontSize(9.5).font('Helvetica').text('Founder & Lead Engineer — MSc Data Science for Management, Univ. of Parma', 70, 368);
+  // Minimal Founder Box (Pixel-Perfect Grid Layout)
+  doc.roundedRect(45, 285, 505, 160, 12).fillAndStroke('#FFFFFF', '#E2E8F0');
+  doc.fillColor('#8B5CF6').fontSize(8.5).font('Helvetica-Bold').text('LEADERSHIP & CREATIVE DIRECTION', 65, 302);
+  doc.fillColor('#111111').fontSize(20).font('Times-Bold').text('Vedant Joliya', 65, 318);
+  doc.fillColor('#71717A').fontSize(9.5).font('Helvetica').text('Founder & Lead Engineer — MSc Data Science for Management, Univ. of Parma', 65, 344);
 
-  doc.strokeColor('#E2E8F0').lineWidth(0.5).moveTo(70, 390).lineTo(525, 390).stroke();
+  doc.strokeColor('#E2E8F0').lineWidth(0.5).moveTo(65, 368).lineTo(530, 368).stroke();
 
-  doc.fillColor('#111111').fontSize(9.5).font('Helvetica-Bold').text('Location: Parma, Italy   •   Phone: ', 70, 405, { continued: true });
-  doc.fillColor('#8B5CF6').text('+39 3516785413', { link: 'tel:+393516785413', underline: true });
+  // Structured Metadata Row 1
+  doc.fillColor('#71717A').fontSize(7.5).font('Helvetica-Bold').text('LOCATION', 65, 378);
+  doc.fillColor('#111111').fontSize(9.5).font('Helvetica-Bold').text('Parma, Italy', 65, 390);
 
-  doc.fillColor('#111111').fontSize(9.5).font('Helvetica-Bold').text('Email: ', 70, 420, { continued: true });
-  doc.fillColor('#8B5CF6').text('contactsvedant@gmail.com', { link: 'mailto:contactsvedant@gmail.com', underline: true });
-  doc.fillColor('#111111').text('   •   Web: ', { continued: true });
-  doc.fillColor('#8B5CF6').text('vedsweb.it', { link: 'https://vedsweb.it', underline: true });
+  doc.fillColor('#71717A').fontSize(7.5).font('Helvetica-Bold').text('PHONE CONTACT', 185, 378);
+  doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text('+39 3516785413', 185, 390, { link: 'tel:+393516785413' });
+
+  doc.fillColor('#71717A').fontSize(7.5).font('Helvetica-Bold').text('EMAIL ADDRESS', 345, 378);
+  doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text('contactsvedant@gmail.com', 345, 390, { link: 'mailto:contactsvedant@gmail.com' });
+
+  // Structured Metadata Row 2
+  doc.fillColor('#71717A').fontSize(7.5).font('Helvetica-Bold').text('OFFICIAL PORTFOLIO WEBSITE', 65, 412);
+  doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text('https://vedsweb.it ↗', 65, 424, { link: 'https://vedsweb.it' });
 
   // Scan QR Code Container
-  doc.roundedRect(45, 470, 505, 185, 12).fillAndStroke('#111111', '#111111');
-  doc.image(mainQrBuffer, 70, 495, { width: 135, height: 135 });
+  doc.roundedRect(45, 465, 505, 185, 12).fillAndStroke('#111111', '#111111');
+  doc.image(mainQrBuffer, 70, 490, { width: 135, height: 135 });
 
-  doc.fillColor('#8B5CF6').fontSize(9).font('Helvetica-Bold').text('INSTANT DIGITAL ACCESS', 230, 505);
-  doc.fillColor('#FFFFFF').fontSize(22).font('Times-Bold').text('Scan to Explore Live Website', 230, 522, { link: 'https://vedsweb.it' });
+  doc.fillColor('#8B5CF6').fontSize(9).font('Helvetica-Bold').text('INSTANT DIGITAL ACCESS', 230, 500);
+  doc.fillColor('#FFFFFF').fontSize(22).font('Times-Bold').text('Scan to Explore Live Website', 230, 517, { link: 'https://vedsweb.it' });
   doc.fillColor('#A1A1AA').fontSize(10).font('Helvetica').text(
     'Point any smartphone camera at this QR code to launch our complete live portfolio, interactive pricing calculator, and admin control center.',
     230,
-    555,
+    550,
     { width: 290, lineGap: 4 }
   );
 
-  doc.fillColor('#FFFFFF').fontSize(11).font('Helvetica-Bold').text('https://vedsweb.it ↗', 230, 615, { link: 'https://vedsweb.it', underline: true });
+  doc.fillColor('#FFFFFF').fontSize(11).font('Helvetica-Bold').text('https://vedsweb.it ↗', 230, 610, { link: 'https://vedsweb.it' });
 
   // Footer Cover Page
   doc.fillColor('#A1A1AA').fontSize(8.5).font('Helvetica').text('VedsWeb Studio © 2026 — Designed in Parma, Italy', 45, 785, { align: 'center', width: 505 });
@@ -178,7 +184,7 @@ async function buildPDF() {
     doc.fillColor('#8B5CF6').fontSize(8.5).font('Helvetica-Bold').text(p.category.toUpperCase(), 185, y + 18);
     doc.fillColor('#111111').fontSize(18).font('Times-Bold').text(p.title, 185, y + 32, { link: p.url });
     doc.fillColor('#71717A').fontSize(9).font('Helvetica').text(p.desc, 185, y + 56, { width: 345, lineGap: 3 });
-    doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text(`Click or Scan QR to Launch: ${p.url}`, 185, y + 108, { link: p.url, underline: true });
+    doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text(`Click or Scan QR to Launch: ${p.url}`, 185, y + 108, { link: p.url });
   }
 
   doc.fillColor('#A1A1AA').fontSize(8.5).font('Helvetica').text('VedsWeb Studio Deck — Page 3 of 4', 45, 785, { align: 'center', width: 505 });
@@ -205,7 +211,7 @@ async function buildPDF() {
     doc.fillColor('#8B5CF6').fontSize(8.5).font('Helvetica-Bold').text(p.category.toUpperCase(), 185, y + 18);
     doc.fillColor('#111111').fontSize(18).font('Times-Bold').text(p.title, 185, y + 32, { link: p.url });
     doc.fillColor('#71717A').fontSize(9).font('Helvetica').text(p.desc, 185, y + 56, { width: 345, lineGap: 3 });
-    doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text(`Click or Scan QR to Launch: ${p.url}`, 185, y + 108, { link: p.url, underline: true });
+    doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text(`Click or Scan QR to Launch: ${p.url}`, 185, y + 108, { link: p.url });
   }
 
   doc.fillColor('#A1A1AA').fontSize(8.5).font('Helvetica').text('VedsWeb Studio Deck — Page 4 of 4', 45, 785, { align: 'center', width: 505 });
@@ -214,7 +220,7 @@ async function buildPDF() {
 
   return new Promise((resolve) => {
     stream.on('finish', () => {
-      console.log('PDF deck with active hyperlinks generated successfully at public/VedsWeb_Studio_Agency_Deck.pdf');
+      console.log('PDF deck with perfect grid alignment generated successfully at public/VedsWeb_Studio_Agency_Deck.pdf');
       resolve();
     });
   });
