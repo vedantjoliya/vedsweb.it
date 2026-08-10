@@ -411,49 +411,12 @@ const BASE_RATES_EUR = {
   multiPageEnterprise: 1499
 };
 
-const INITIAL_PROJECTS = [
-  {
-    id: 'proj-1',
-    title: 'Minimalist Architecture Studio',
-    category: 'Framer Architecture Portfolio',
-    descriptionKey: 'projDesc1',
-    description: 'Bespoke portfolio website designed for a luxury European architectural studio with high-resolution image galleries and smooth scroll transitions.',
-    demoUrl: 'https://vedsweb-architect.framer.website/',
-    devices: ['desktop', 'tablet', 'mobile']
-  },
-  {
-    id: 'proj-2',
-    title: 'Modern Coffee Roastery & Cafe',
-    category: 'Framer E-Commerce & Cafe App',
-    descriptionKey: 'projDesc2',
-    description: 'Interactive web application featuring bean origin selection, menu showcase, and online reservation flow built with Framer.',
-    demoUrl: 'https://vedsweb-coffee.framer.website/',
-    devices: ['desktop', 'tablet', 'mobile']
-  },
-  {
-    id: 'proj-3',
-    title: 'Executive Automotive Showroom',
-    category: 'Framer Automotive Showcase',
-    descriptionKey: 'projDesc3',
-    description: 'High-performance digital showroom with interactive 360-degree vehicle customizer and instant booking engine.',
-    demoUrl: 'https://vedsweb-car.framer.website/',
-    devices: ['desktop', 'tablet', 'mobile']
-  },
-  {
-    id: 'proj-4',
-    title: 'High-Precision Dental Clinic',
-    category: 'Framer Medical & Clinic Portal',
-    descriptionKey: 'projDesc4',
-    description: 'Clean medical portal with online appointment booking system, treatment price calculator, and patient review showcase.',
-    demoUrl: 'https://vedsweb-dentist.framer.website/',
-    devices: ['desktop', 'tablet', 'mobile']
-  }
-];
+const INITIAL_PROJECTS = [];
 
 export const PortfolioProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
-    const saved = localStorage.getItem('vedsweb_projects_v3');
-    return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
+    const saved = localStorage.getItem('vedsweb_admin_projects_v5');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [currency, setCurrency] = useState('EUR');
@@ -588,7 +551,7 @@ export const PortfolioProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('vedsweb_projects_v3', JSON.stringify(projects));
+    localStorage.setItem('vedsweb_admin_projects_v5', JSON.stringify(projects));
   }, [projects]);
 
   useEffect(() => {
@@ -620,8 +583,8 @@ export const PortfolioProvider = ({ children }) => {
   };
 
   const resetData = () => {
-    setProjects(INITIAL_PROJECTS);
-    localStorage.removeItem('vedsweb_projects_v3');
+    setProjects([]);
+    localStorage.removeItem('vedsweb_admin_projects_v5');
   };
 
   const contactInfo = {

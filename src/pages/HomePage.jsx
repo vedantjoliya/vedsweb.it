@@ -117,11 +117,16 @@ export const HomePage = () => {
         </div>
 
         <div className="space-y-20">
-          {projects.slice(0, 4).map((project, idx) => (
-            <div
-              key={project.id}
-              className={`reveal ${idx > 0 ? `delay-${idx}00` : ''} group text-left`}
-            >
+          {projects.length === 0 ? (
+            <div className="reveal text-center py-16 px-6 bg-white border border-[#1A1816]/10 rounded-3xl">
+              <p className="text-lg text-[#706B65] font-body">No projects added yet.</p>
+            </div>
+          ) : (
+            projects.slice(0, 4).map((project, idx) => (
+              <div
+                key={project.id}
+                className={`reveal ${idx > 0 ? `delay-${idx}00` : ''} group text-left`}
+              >
               <div className="relative rounded-2xl overflow-hidden bg-white border border-[#1A1816]/10 aspect-video cursor-pointer shadow-vj-md shadow-vj-hover"
                 onClick={() => setSelectedProject(project)}
               >
@@ -162,7 +167,8 @@ export const HomePage = () => {
                 <p className="text-xs text-[#706B65] mt-1 font-medium">{project.category || 'Framer Web Application'}</p>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
 
