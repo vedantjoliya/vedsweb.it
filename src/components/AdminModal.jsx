@@ -30,12 +30,12 @@ export const AdminModal = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passwordInput === 'vedsweb2026') {
+    if (passwordInput === 'Joliya@283') {
       setIsAdminLoggedIn(true);
       setErrorMsg('');
       setPasswordInput('');
     } else {
-      setErrorMsg('Invalid secret key! Passcode: vedsweb2026');
+      setErrorMsg('Invalid secret key. Access denied.');
     }
   };
 
@@ -127,7 +127,7 @@ export const AdminModal = () => {
             <form onSubmit={handleLogin} className="space-y-4">
               <input
                 type="password"
-                placeholder="Enter secret key (Default: vedsweb2026)"
+                placeholder="Enter secret key..."
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition-all"
@@ -146,10 +146,6 @@ export const AdminModal = () => {
                 UNLOCK ADMIN PANEL
               </button>
             </form>
-
-            <div className="text-[11px] text-slate-400">
-              Passcode: <code className="text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md font-mono font-bold">vedsweb2026</code>
-            </div>
           </div>
         ) : (
           /* Dashboard */
