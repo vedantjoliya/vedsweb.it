@@ -178,7 +178,7 @@ export const AdminModal = () => {
                 </div>
                 <div className="text-2xl font-bold font-display text-emerald-900 flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>{stats?.activeVisitors || 3} Browsing</span>
+                  <span>{stats?.activeVisitors ?? 1} Browsing</span>
                 </div>
               </div>
 
@@ -188,7 +188,7 @@ export const AdminModal = () => {
                   <Eye className="w-4 h-4" />
                 </div>
                 <div className="text-2xl font-bold font-display text-indigo-900">
-                  {stats?.pageViews || 185}
+                  {stats?.pageViews ?? 0}
                 </div>
               </div>
 
@@ -198,7 +198,7 @@ export const AdminModal = () => {
                   <MousePointerClick className="w-4 h-4" />
                 </div>
                 <div className="text-2xl font-bold font-display text-amber-900">
-                  {stats?.contactClicks || 48}
+                  {stats?.contactClicks ?? 0}
                 </div>
               </div>
 

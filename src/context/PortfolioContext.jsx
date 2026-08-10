@@ -460,10 +460,10 @@ export const PortfolioProvider = ({ children }) => {
   });
 
   const [stats, setStats] = useState({
-    pageViews: 184,
-    contactClicks: 47,
+    pageViews: 0,
+    contactClicks: 0,
     totalInquiries: 0,
-    activeVisitors: 3
+    activeVisitors: 1
   });
 
   const [isCloudSyncing, setIsCloudSyncing] = useState(false);
@@ -518,11 +518,12 @@ export const PortfolioProvider = ({ children }) => {
               localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(data.inquiries));
             }
             if (data.stats) {
-              const updatedViews = (data.stats.pageViews || 184) + 1;
+              const updatedViews = (data.stats.pageViews || 0) + 1;
               const newStats = {
-                ...data.stats,
                 pageViews: updatedViews,
-                activeVisitors: Math.floor(Math.random() * 4) + 2
+                contactClicks: data.stats.contactClicks || 0,
+                totalInquiries: Array.isArray(data.inquiries) ? data.inquiries.length : 0,
+                activeVisitors: Math.max(1, data.stats.activeVisitors || 1)
               };
               setStats(newStats);
               saveFullDatabaseToCloud(data.projects || projects, data.inquiries || inquiries, newStats);
