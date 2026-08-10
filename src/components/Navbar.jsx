@@ -4,7 +4,10 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 
 export const Navbar = () => {
-  const { t } = usePortfolio();
+  const {
+    t,
+    recordContactClick
+  } = usePortfolio();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -50,6 +53,7 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center gap-3">
             <Link
               to="/contact"
+              onClick={recordContactClick}
               className="flex items-center gap-2 px-6 py-3 rounded-full bg-[#1A1816] text-white text-[12px] font-body font-bold uppercase tracking-[0.12em] hover:bg-[#8B5CF6] transition-all duration-300 shadow-md"
             >
               <span>{t('startProject')}</span>

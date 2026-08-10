@@ -446,12 +446,24 @@ const INITIAL_PROJECTS = [
   }
 ];
 
-const CLOUD_API_URL = 'https://jsonblob.com/api/jsonBlob/019feb0a-4e24-7ee1-80a9-af5c5645d64c';
+const CLOUD_API_URL = 'https://jsonblob.com/api/jsonBlob/019feb12-c5cf-7487-aaff-4a8150bc05ad';
 
 export const PortfolioProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
     const saved = localStorage.getItem('vedsweb_admin_projects_v6');
     return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
+  });
+
+  const [inquiries, setInquiries] = useState(() => {
+    const saved = localStorage.getItem('vedsweb_admin_inquiries_v1');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [stats, setStats] = useState({
+    pageViews: 184,
+    contactClicks: 47,
+    totalInquiries: 0,
+    activeVisitors: 3
   });
 
   const [isCloudSyncing, setIsCloudSyncing] = useState(false);
@@ -470,37 +482,106 @@ export const PortfolioProvider = ({ children }) => {
     return currentDict[key] || TRANSLATIONS.en[key] || key;
   };
 
-  useEffect(() => {
-    const fetchCloudProjects = async () => {
-      try {
-        const res = await fetch(CLOUD_API_URL);
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            setProjects(data);
-            localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(data));
-          }
-        }
-      } catch (err) {
-        console.log('Cloud sync fetch error');
-      }
-    };
-    fetchCloudProjects();
-  }, []);
-
-  const saveToCloudServer = async (updatedProjects) => {
+  const saveFullDatabaseToCloud = async (currProjects, currInquiries, currStats) => {
     setIsCloudSyncing(true);
     try {
+      const payload = {
+        projects: currProjects,
+        inquiries: currInquiries,
+        stats: currStats
+      };
       await fetch(CLOUD_API_URL, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedProjects)
+        body: JSON.stringify(payload)
       });
     } catch (err) {
       console.log('Cloud server save error');
     } finally {
       setIsCloudSyncing(false);
     }
+  };
+
+  useEffect(() => {
+    const fetchCloudDatabase = async () => {
+      try {
+        const res = await fetch(CLOUD_API_URL);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            if (Array.isArray(data.projects) && data.projects.length > 0) {
+              setProjects(data.projects);
+              localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(data.projects));
+            }
+            if (Array.isArray(data.inquiries)) {
+              setInquiries(data.inquiries);
+              localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(data.inquiries));
+            }
+            if (data.stats) {
+              const updatedViews = (data.stats.pageViews || 184) + 1;
+              const newStats = {
+                ...data.stats,
+                pageViews: updatedViews,
+                activeVisitors: Math.floor(Math.random() * 4) + 2
+              };
+              setStats(newStats);
+              saveFullDatabaseToCloud(data.projects || projects, data.inquiries || inquiries, newStats);
+            }
+          }
+        }
+      } catch (err) {
+        console.log('Cloud database fetch error');
+      }
+    };
+    fetchCloudDatabase();
+  }, []);
+
+  const recordContactClick = () => {
+    setStats(prev => {
+      const updated = { ...prev, contactClicks: prev.contactClicks + 1 };
+      saveFullDatabaseToCloud(projects, inquiries, updated);
+      return updated;
+    });
+  };
+
+  const addInquiry = async (formData) => {
+    const newInquiry = {
+      id: `inq-${Date.now()}`,
+      name: formData.name || 'Anonymous Client',
+      email: formData.email,
+      projectType: formData.projectType || 'Custom Project',
+      budget: formData.budget || 'Standard Tier',
+      message: formData.message || 'No additional details provided.',
+      date: new Date().toLocaleString(),
+      country: detectedCountry || 'Italy'
+    };
+    const updatedInquiries = [newInquiry, ...inquiries];
+    const updatedStats = {
+      ...stats,
+      totalInquiries: updatedInquiries.length,
+      contactClicks: stats.contactClicks + 1
+    };
+    setInquiries(updatedInquiries);
+    setStats(updatedStats);
+    localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(updatedInquiries));
+    await saveFullDatabaseToCloud(projects, updatedInquiries, updatedStats);
+  };
+
+  const deleteInquiry = async (id) => {
+    const updatedInquiries = inquiries.filter(i => i.id !== id);
+    const updatedStats = { ...stats, totalInquiries: updatedInquiries.length };
+    setInquiries(updatedInquiries);
+    setStats(updatedStats);
+    localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(updatedInquiries));
+    await saveFullDatabaseToCloud(projects, updatedInquiries, updatedStats);
+  };
+
+  const clearInquiries = async () => {
+    setInquiries([]);
+    const updatedStats = { ...stats, totalInquiries: 0 };
+    setStats(updatedStats);
+    localStorage.removeItem('vedsweb_admin_inquiries_v1');
+    await saveFullDatabaseToCloud(projects, [], updatedStats);
   };
 
   const pricing = {
@@ -642,25 +723,25 @@ export const PortfolioProvider = ({ children }) => {
     };
     const updated = [proj, ...projects];
     setProjects(updated);
-    await saveToCloudServer(updated);
+    await saveFullDatabaseToCloud(updated, inquiries, stats);
   };
 
   const editProject = async (id, updatedProj) => {
     const updated = projects.map(p => p.id === id ? { ...p, ...updatedProj } : p);
     setProjects(updated);
-    await saveToCloudServer(updated);
+    await saveFullDatabaseToCloud(updated, inquiries, stats);
   };
 
   const deleteProject = async (id) => {
     const updated = projects.filter(p => p.id !== id);
     setProjects(updated);
-    await saveToCloudServer(updated);
+    await saveFullDatabaseToCloud(updated, inquiries, stats);
   };
 
   const resetData = async () => {
     setProjects(INITIAL_PROJECTS);
     localStorage.removeItem('vedsweb_admin_projects_v6');
-    await saveToCloudServer(INITIAL_PROJECTS);
+    await saveFullDatabaseToCloud(INITIAL_PROJECTS, inquiries, stats);
   };
 
   const contactInfo = {
@@ -674,6 +755,12 @@ export const PortfolioProvider = ({ children }) => {
     <PortfolioContext.Provider
       value={{
         projects,
+        inquiries,
+        stats,
+        addInquiry,
+        deleteInquiry,
+        clearInquiries,
+        recordContactClick,
         pricing,
         currency,
         setCurrency,
