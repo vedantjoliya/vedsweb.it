@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { usePortfolio } from '../context/PortfolioContext';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { ArrowUpRight, Menu, X, Download } from 'lucide-react';
 
 export const Navbar = () => {
   const {
@@ -51,6 +51,15 @@ export const Navbar = () => {
 
           {/* Right Controls - CTA Button */}
           <div className="hidden md:flex items-center gap-3">
+            <a
+              href="/VedsWeb_Studio_Agency_Deck.pdf"
+              download="VedsWeb_Studio_Agency_Deck.pdf"
+              className="hidden lg:flex items-center gap-2 px-5 py-3 rounded-full bg-white text-[#1A1816] border border-[#1A1816]/20 text-[12px] font-body font-bold uppercase tracking-[0.12em] hover:bg-[#8B5CF6] hover:text-white hover:border-[#8B5CF6] transition-all duration-300 shadow-sm"
+              title="Download VedsWeb Studio Official Agency Deck (PDF)"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Deck (PDF)</span>
+            </a>
             <Link
               to="/contact"
               onClick={recordContactClick}

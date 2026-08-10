@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { usePortfolio } from '../context/PortfolioContext';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Download } from 'lucide-react';
 
 export const Footer = () => {
   const { contactInfo, t } = usePortfolio();
@@ -70,6 +70,10 @@ export const Footer = () => {
                 <Phone className="w-4 h-4 text-[#8B5CF6]" />
                 <span className="hover-line">{contactInfo.phoneFormatted}</span>
               </a>
+              <a href="/VedsWeb_Studio_Agency_Deck.pdf" download="VedsWeb_Studio_Agency_Deck.pdf" className="flex items-center gap-3 text-xs text-[#8B5CF6] hover:text-[#1A1816] font-semibold transition-colors">
+                <Download className="w-4 h-4" />
+                <span className="underline">Download Official Agency Deck (PDF)</span>
+              </a>
             </div>
           </div>
         </div>
@@ -77,6 +81,9 @@ export const Footer = () => {
         {/* Bottom */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#706B65] font-medium tracking-wide">
           <span>© {new Date().getFullYear()} {t('footerRights')}</span>
+          <a href="/VedsWeb_Studio_Agency_Deck.pdf" download="VedsWeb_Studio_Agency_Deck.pdf" className="text-[#8B5CF6] hover:underline font-semibold">
+            Download PDF Deck (Includes QR Codes & Pricing)
+          </a>
         </div>
       </div>
     </footer>

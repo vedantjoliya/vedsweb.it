@@ -414,33 +414,65 @@ const BASE_RATES_EUR = {
 const INITIAL_PROJECTS = [
   {
     id: 'proj-1',
-    title: 'Luxury Hotel',
-    category: 'Framer Web Application',
-    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions.',
-    demoUrl: 'https://hotelliaa.framer.website/',
+    title: 'Bar Cafe',
+    category: 'Framer E-Commerce & Cafe App',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
+    demoUrl: 'https://bartea.framer.website/',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
     id: 'proj-2',
-    title: 'Modern Salon',
-    category: 'Framer Web Application',
-    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions.',
-    demoUrl: 'https://salonixxx.framer.website/',
+    title: 'Barber Shop',
+    category: 'Framer Grooming & Service Portal',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
+    demoUrl: 'https://abarber.framer.website/',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
     id: 'proj-3',
-    title: 'Luxury Restaurant',
-    category: 'Framer Web Application',
-    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions.',
-    demoUrl: 'https://frappiesto.framer.website/',
+    title: 'Drink Product',
+    category: 'Framer Beverage Showcase',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
+    demoUrl: 'https://zoooom.framer.website/',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
     id: 'proj-4',
+    title: 'Modern Restaurant',
+    category: 'Framer Dining Experience Platform',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
+    demoUrl: 'https://sehran.framer.website/',
+    devices: ['desktop', 'tablet', 'mobile']
+  },
+  {
+    id: 'proj-5',
+    title: 'Luxury Hotel',
+    category: 'Framer Hospitality & Booking App',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
+    demoUrl: 'https://hotelliaa.framer.website/',
+    devices: ['desktop', 'tablet', 'mobile']
+  },
+  {
+    id: 'proj-6',
+    title: 'Modern Salon',
+    category: 'Framer Beauty & Wellness Portal',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
+    demoUrl: 'https://salonixxx.framer.website/',
+    devices: ['desktop', 'tablet', 'mobile']
+  },
+  {
+    id: 'proj-7',
+    title: 'Luxury Restaurant',
+    category: 'Framer Gourmet Dining Showcase',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
+    demoUrl: 'https://frappiesto.framer.website/',
+    devices: ['desktop', 'tablet', 'mobile']
+  },
+  {
+    id: 'proj-8',
     title: 'Bakery Shop',
-    category: 'Framer Web Application',
-    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions.',
+    category: 'Framer Artisanal Pastry Store',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
     demoUrl: 'https://pasticceriafortini.framer.website/',
     devices: ['desktop', 'tablet', 'mobile']
   }
