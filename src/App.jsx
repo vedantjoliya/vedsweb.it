@@ -29,6 +29,7 @@ export const App = () => {
           <main className="flex-1">
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/admin" element={<HomePage />} />
               <Route path="/work" element={<WorkPage />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/pricing" element={<PricingPage />} />

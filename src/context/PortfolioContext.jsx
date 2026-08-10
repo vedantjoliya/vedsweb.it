@@ -574,13 +574,17 @@ export const PortfolioProvider = ({ children }) => {
     const checkAdminRoute = () => {
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
-      if (path === '/admin' || path.endsWith('/admin') || hash === '#admin') {
+      if (path === '/admin' || path.endsWith('/admin') || hash === '#admin' || hash === '#/admin') {
         setIsAdminOpen(true);
       }
     };
     checkAdminRoute();
     window.addEventListener('popstate', checkAdminRoute);
-    return () => window.removeEventListener('popstate', checkAdminRoute);
+    window.addEventListener('hashchange', checkAdminRoute);
+    return () => {
+      window.removeEventListener('popstate', checkAdminRoute);
+      window.removeEventListener('hashchange', checkAdminRoute);
+    };
   }, []);
 
   useEffect(() => {
