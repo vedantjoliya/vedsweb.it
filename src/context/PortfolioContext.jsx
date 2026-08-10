@@ -411,12 +411,45 @@ const BASE_RATES_EUR = {
   multiPageEnterprise: 1499
 };
 
-const INITIAL_PROJECTS = [];
+const INITIAL_PROJECTS = [
+  {
+    id: 'proj-1',
+    title: 'Luxury Hotel',
+    category: 'Framer Web Application',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions.',
+    demoUrl: 'https://hotelliaa.framer.website/',
+    devices: ['desktop', 'tablet', 'mobile']
+  },
+  {
+    id: 'proj-2',
+    title: 'Modern Salon',
+    category: 'Framer Web Application',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions.',
+    demoUrl: 'https://salonixxx.framer.website/',
+    devices: ['desktop', 'tablet', 'mobile']
+  },
+  {
+    id: 'proj-3',
+    title: 'Luxury Restaurant',
+    category: 'Framer Web Application',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions.',
+    demoUrl: 'https://frappiesto.framer.website/',
+    devices: ['desktop', 'tablet', 'mobile']
+  },
+  {
+    id: 'proj-4',
+    title: 'Bakery Shop',
+    category: 'Framer Web Application',
+    description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions.',
+    demoUrl: 'https://pasticceriafortini.framer.website/',
+    devices: ['desktop', 'tablet', 'mobile']
+  }
+];
 
 export const PortfolioProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
-    const saved = localStorage.getItem('vedsweb_admin_projects_v5');
-    return saved ? JSON.parse(saved) : [];
+    const saved = localStorage.getItem('vedsweb_admin_projects_v6');
+    return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
   });
 
   const [currency, setCurrency] = useState('EUR');
@@ -551,7 +584,7 @@ export const PortfolioProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('vedsweb_admin_projects_v5', JSON.stringify(projects));
+    localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(projects));
   }, [projects]);
 
   useEffect(() => {
@@ -583,8 +616,8 @@ export const PortfolioProvider = ({ children }) => {
   };
 
   const resetData = () => {
-    setProjects([]);
-    localStorage.removeItem('vedsweb_admin_projects_v5');
+    setProjects(INITIAL_PROJECTS);
+    localStorage.removeItem('vedsweb_admin_projects_v6');
   };
 
   const contactInfo = {
