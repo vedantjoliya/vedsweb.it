@@ -518,15 +518,28 @@ export const PortfolioProvider = ({ children }) => {
               localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(data.inquiries));
             }
             if (data.stats) {
-              const updatedViews = (data.stats.pageViews || 0) + 1;
+              const hasVisitedSession = sessionStorage.getItem('vedsweb_device_session_visited');
+              let viewsCount = data.stats.pageViews || 0;
+              let isNewSession = false;
+
+              if (!hasVisitedSession) {
+                viewsCount += 1;
+                sessionStorage.setItem('vedsweb_device_session_visited', 'true');
+                isNewSession = true;
+              }
+
               const newStats = {
-                pageViews: updatedViews,
+                pageViews: viewsCount,
                 contactClicks: data.stats.contactClicks || 0,
-                totalInquiries: Array.isArray(data.inquiries) ? data.inquiries.length : 0,
+                totalInquiries: Array.isArray(data.inquiries) ? data.inquiries.length : (inquiries?.length || 0),
                 activeVisitors: Math.max(1, data.stats.activeVisitors || 1)
               };
+
               setStats(newStats);
-              saveFullDatabaseToCloud(data.projects || projects, data.inquiries || inquiries, newStats);
+
+              if (isNewSession) {
+                saveFullDatabaseToCloud(data.projects || projects, data.inquiries || inquiries, newStats);
+              }
             }
           }
         }
