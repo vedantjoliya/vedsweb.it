@@ -677,56 +677,64 @@ export const PortfolioProvider = ({ children }) => {
       setDetectedLanguageLabel(`${foundLang.name} (${foundLang.code.toUpperCase()})`);
     }
 
-    const detectRegion = async () => {
-      try {
-        const res = await fetch('https://ipapi.co/json/');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.country_name) {
-            setDetectedCountry(`${data.city ? data.city + ', ' : ''}${data.country_name}`);
-          }
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+      let detectedTzCountry = 'Italy';
 
-          const countryCode = data.country_code;
-          if (countryCode === 'IT') {
-            setLanguage('it');
-            setCurrency('EUR');
-          } else if (countryCode === 'DE' || countryCode === 'AT' || countryCode === 'CH') {
-            setLanguage('de');
-            setCurrency(countryCode === 'CH' ? 'CHF' : 'EUR');
-          } else if (countryCode === 'FR' || countryCode === 'BE') {
-            setLanguage('fr');
-            setCurrency('EUR');
-          } else if (countryCode === 'ES' || countryCode === 'MX' || countryCode === 'AR') {
-            setLanguage('es');
-            setCurrency(countryCode === 'MX' ? 'MXN' : 'EUR');
-          } else if (countryCode === 'IN') {
-            setLanguage('hi');
-            setCurrency('INR');
-          } else if (countryCode === 'GB' || countryCode === 'UK') {
-            setLanguage('en');
-            setCurrency('GBP');
-          } else if (countryCode === 'US' || countryCode === 'CA' || countryCode === 'AU') {
-            setLanguage('en');
-            setCurrency(countryCode === 'CA' ? 'CAD' : countryCode === 'AU' ? 'AUD' : 'USD');
-          } else if (countryCode === 'JP') {
-            setLanguage('ja');
-            setCurrency('JPY');
-          } else if (countryCode === 'CN') {
-            setLanguage('zh');
-            setCurrency('CNY');
-          } else if (countryCode === 'RU') {
-            setLanguage('ru');
-            setCurrency('EUR');
-          } else if (countryCode === 'BR') {
-            setLanguage('pt');
-            setCurrency('BRL');
-          }
-        }
-      } catch (err) {
-        console.log('IP Detection fallback to default');
+      if (tz.includes('Rome') || tz.includes('Europe/Rome') || browserLang.startsWith('it')) {
+        setLanguage('it');
+        setCurrency('EUR');
+        detectedTzCountry = 'Italy';
+      } else if (tz.includes('Berlin') || tz.includes('Vienna') || tz.includes('Zurich') || browserLang.startsWith('de')) {
+        setLanguage('de');
+        setCurrency(tz.includes('Zurich') ? 'CHF' : 'EUR');
+        detectedTzCountry = tz.includes('Zurich') ? 'Switzerland' : 'Germany';
+      } else if (tz.includes('Paris') || tz.includes('Brussels') || browserLang.startsWith('fr')) {
+        setLanguage('fr');
+        setCurrency('EUR');
+        detectedTzCountry = 'France';
+      } else if (tz.includes('Madrid') || tz.includes('Mexico') || tz.includes('Buenos_Aires') || browserLang.startsWith('es')) {
+        setLanguage('es');
+        setCurrency(tz.includes('Mexico') ? 'MXN' : 'EUR');
+        detectedTzCountry = tz.includes('Mexico') ? 'Mexico' : 'Spain';
+      } else if (tz.includes('Kolkata') || browserLang.startsWith('hi')) {
+        setLanguage('hi');
+        setCurrency('INR');
+        detectedTzCountry = 'India';
+      } else if (tz.includes('London') || browserLang.startsWith('en-gb')) {
+        setLanguage('en');
+        setCurrency('GBP');
+        detectedTzCountry = 'United Kingdom';
+      } else if (tz.includes('New_York') || tz.includes('Chicago') || tz.includes('Denver') || tz.includes('Los_Angeles') || tz.includes('Toronto') || tz.includes('Sydney') || tz.includes('America') || tz.includes('Australia')) {
+        setLanguage('en');
+        setCurrency(tz.includes('Toronto') ? 'CAD' : tz.includes('Sydney') ? 'AUD' : 'USD');
+        detectedTzCountry = tz.includes('Toronto') ? 'Canada' : tz.includes('Sydney') ? 'Australia' : 'United States';
+      } else if (tz.includes('Tokyo') || browserLang.startsWith('ja')) {
+        setLanguage('ja');
+        setCurrency('JPY');
+        detectedTzCountry = 'Japan';
+      } else if (tz.includes('Shanghai') || browserLang.startsWith('zh')) {
+        setLanguage('zh');
+        setCurrency('CNY');
+        detectedTzCountry = 'China';
+      } else if (tz.includes('Moscow') || browserLang.startsWith('ru')) {
+        setLanguage('ru');
+        setCurrency('EUR');
+        detectedTzCountry = 'Russia';
+      } else if (tz.includes('Sao_Paulo') || browserLang.startsWith('pt')) {
+        setLanguage('pt');
+        setCurrency('BRL');
+        detectedTzCountry = 'Brazil';
+      } else {
+        setLanguage('en');
+        setCurrency('USD');
+        detectedTzCountry = 'United States';
       }
-    };
-    detectRegion();
+
+      setDetectedCountry(detectedTzCountry);
+    } catch (e) {
+      console.log('Local timezone lookup error');
+    }
   }, []);
 
   useEffect(() => {
