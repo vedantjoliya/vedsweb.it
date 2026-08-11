@@ -65,7 +65,7 @@ export const DeviceModal = () => {
             <iframe key={iframeKey} src={selectedProject.demoUrl} title="Preview"
               className="w-full h-full border-0 bg-white overflow-hidden"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups" />
+            />
           </div>
         </div>
       </div>

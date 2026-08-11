@@ -43,15 +43,45 @@ export const WorkPage = () => {
                   className="relative rounded-2xl overflow-hidden bg-white border border-[#1A1816]/10 aspect-[16/10] sm:aspect-video cursor-pointer shadow-vj-md shadow-vj-hover"
                   onClick={() => setSelectedProject(project)}
                 >
+                  {/* Mobile luxury mockup cover */}
+                  <div className="md:hidden absolute inset-0 flex flex-col justify-between p-6 bg-gradient-to-tr from-[#FAF8F5] to-[#F1EDE4] border border-[#1A1816]/5">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] font-body uppercase tracking-[0.2em] font-bold text-[#8B5CF6]">
+                        {project.category || 'Framer Web Application'}
+                      </span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    </div>
+
+                    <div className="space-y-1.5 my-auto">
+                      <h4 className="text-3xl font-display font-light text-[#1A1816] tracking-wide">
+                        {project.title}
+                      </h4>
+                      <p className="text-xs text-[#706B65] max-w-xs line-clamp-2 font-normal leading-relaxed">
+                        {project.description}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-[#1A1816]/10 pt-4">
+                      <span className="flex items-center gap-1.5 text-[10px] font-body uppercase font-bold text-[#1A1816]/75 tracking-wider">
+                        <Eye className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                        <span>{t('preview') || 'Preview'}</span>
+                      </span>
+                      <span className="text-[10px] font-mono text-[#706B65]">
+                        {project.demoUrl.replace('https://', '').replace('/', '')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Desktop live preview iframe */}
                   <iframe
                     src={project.demoUrl}
                     title={project.title}
-                    className="w-full h-full border-0 pointer-events-none transform scale-100 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
+                    className="hidden md:block w-full h-full border-0 pointer-events-none transform scale-100 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
                     loading="lazy"
                     sandbox="allow-scripts allow-same-origin allow-forms"
                   />
 
-                  <div className="absolute inset-0 bg-[#1A1816]/0 group-hover:bg-[#1A1816]/30 transition-all duration-500 flex items-center justify-center">
+                  <div className="hidden md:flex absolute inset-0 bg-[#1A1816]/0 group-hover:bg-[#1A1816]/30 transition-all duration-500 items-center justify-center">
                     <div className="opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-300 flex items-center gap-3">
                       <button className="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-[#1A1816] font-semibold text-xs hover:scale-105 transition-transform uppercase shadow-xl font-body tracking-wider">
                         <Eye className="w-4 h-4 text-[#8B5CF6]" />
@@ -70,6 +100,7 @@ export const WorkPage = () => {
                     </div>
                   </div>
                 </div>
+
 
                 {/* Project Details */}
                 <div className="mt-6 pb-8 border-b border-[#1A1816]/10">
