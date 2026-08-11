@@ -132,7 +132,7 @@ export const HomePage = () => {
                   className="relative rounded-2xl overflow-hidden bg-white border border-[#1A1816]/10 aspect-[16/10] sm:aspect-video cursor-pointer shadow-vj-md shadow-vj-hover"
                   onClick={() => setSelectedProject(project)}
                 >
-                  <ProjectPreviewFrame url={project.demoUrl} title={project.title} />
+                  <ProjectPreviewFrame imageUrl={project.imageUrl} title={project.title} />
 
                   <div className="absolute inset-0 bg-[#1A1816]/0 hover:bg-[#1A1816]/20 group-hover:bg-[#1A1816]/20 transition-all duration-500 flex items-center justify-center pointer-events-none">
                     <div className="opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-300 flex items-center gap-3 pointer-events-auto">

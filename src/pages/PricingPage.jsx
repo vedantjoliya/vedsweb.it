@@ -35,13 +35,7 @@ export const PricingPage = () => {
             {t('pricingTitle')}<span className="text-[#8B5CF6]"> .</span>
           </h1>
 
-          {/* Location Badge */}
-          <div className="reveal delay-200 mt-10 flex flex-wrap items-center gap-3">
-            <div className="px-4 py-2.5 rounded-full bg-white border border-[#1A1816]/15 text-xs text-[#1A1816] font-body font-semibold tracking-wider shadow-xs flex items-center gap-2">
-              <MapPin className="w-3.5 h-3.5 text-[#8B5CF6]" />
-              <span>{t('location')}: {detectedCountry}</span>
-            </div>
-          </div>
+
         </div>
 
         {/* Pricing Cards */}

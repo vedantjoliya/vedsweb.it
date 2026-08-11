@@ -111,43 +111,9 @@
   to { opacity: 1; }
 }
 
-.reveal {
-  opacity: 0;
-  transform: translateY(40px);
-}
-.reveal.revealed {
-  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.reveal-left {
-  opacity: 0;
-  transform: translateX(-40px);
-}
-.reveal-left.revealed {
-  animation: fadeInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.reveal-right {
-  opacity: 0;
-  transform: translateX(40px);
-}
-.reveal-right.revealed {
-  animation: fadeInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.reveal-scale {
-  opacity: 0;
-  transform: scale(0.94);
-}
-.reveal-scale.revealed {
-  animation: scaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.reveal-fade {
-  opacity: 0;
-}
-.reveal-fade.revealed {
-  animation: fadeIn 0.8s ease forwards;
+.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade {
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 /* Stagger delay utilities */
@@ -177,7 +143,7 @@
 }
 
 .page-transition {
-  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: none !important;
 }
 
 /* Global scrollbar track removal for all iframes */

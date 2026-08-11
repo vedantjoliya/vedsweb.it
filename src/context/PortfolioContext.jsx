@@ -418,6 +418,7 @@ const INITIAL_PROJECTS = [
     category: 'Framer E-Commerce & Cafe App',
     description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
     demoUrl: 'https://bartea.framer.website/',
+    imageUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
@@ -426,6 +427,7 @@ const INITIAL_PROJECTS = [
     category: 'Framer Grooming & Service Portal',
     description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
     demoUrl: 'https://abarber.framer.website/',
+    imageUrl: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
@@ -434,6 +436,7 @@ const INITIAL_PROJECTS = [
     category: 'Framer Beverage Showcase',
     description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
     demoUrl: 'https://zoooom.framer.website/',
+    imageUrl: 'https://images.unsplash.com/photo-1527960656366-ee2a999e3286?auto=format&fit=crop&w=800&q=80',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
@@ -442,6 +445,7 @@ const INITIAL_PROJECTS = [
     category: 'Framer Dining Experience Platform',
     description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
     demoUrl: 'https://sehran.framer.website/',
+    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
@@ -450,6 +454,7 @@ const INITIAL_PROJECTS = [
     category: 'Framer Hospitality & Booking App',
     description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
     demoUrl: 'https://hotelliaa.framer.website/',
+    imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
@@ -458,6 +463,7 @@ const INITIAL_PROJECTS = [
     category: 'Framer Beauty & Wellness Portal',
     description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
     demoUrl: 'https://salonixxx.framer.website/',
+    imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
@@ -466,6 +472,7 @@ const INITIAL_PROJECTS = [
     category: 'Framer Gourmet Dining Showcase',
     description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
     demoUrl: 'https://frappiesto.framer.website/',
+    imageUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80',
     devices: ['desktop', 'tablet', 'mobile']
   },
   {
@@ -474,6 +481,7 @@ const INITIAL_PROJECTS = [
     category: 'Framer Artisanal Pastry Store',
     description: 'A visually engaging Framer website built with modern layouts, responsive design, and smooth interactions. Designed to create a memorable user experience across desktop and mobile.',
     demoUrl: 'https://pasticceriafortini.framer.website/',
+    imageUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80',
     devices: ['desktop', 'tablet', 'mobile']
   }
 ];
@@ -483,7 +491,21 @@ const CLOUD_API_URL = 'https://jsonblob.com/api/jsonBlob/019feb12-c5cf-7487-aaff
 export const PortfolioProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
     const saved = localStorage.getItem('vedsweb_admin_projects_v6');
-    return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return parsed.map(p => {
+          const matchingInitial = INITIAL_PROJECTS.find(init => init.title === p.title || init.id === p.id);
+          return {
+            ...p,
+            imageUrl: p.imageUrl || (matchingInitial ? matchingInitial.imageUrl : '')
+          };
+        });
+      } catch (e) {
+        return INITIAL_PROJECTS;
+      }
+    }
+    return INITIAL_PROJECTS;
   });
 
   const [inquiries, setInquiries] = useState(() => {
@@ -500,9 +522,9 @@ export const PortfolioProvider = ({ children }) => {
 
   const [isCloudSyncing, setIsCloudSyncing] = useState(false);
   const [currency, setCurrency] = useState('EUR');
-  const [language, setLanguage] = useState('it');
+  const [language, setLanguage] = useState('en');
   const [detectedCountry, setDetectedCountry] = useState('Italy');
-  const [detectedLanguageLabel, setDetectedLanguageLabel] = useState('Italiano (IT)');
+  const [detectedLanguageLabel, setDetectedLanguageLabel] = useState('English (EN)');
   const [selectedProject, setSelectedProject] = useState(null);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
@@ -510,8 +532,7 @@ export const PortfolioProvider = ({ children }) => {
   });
 
   const t = (key) => {
-    const currentDict = TRANSLATIONS[language] || TRANSLATIONS.it || TRANSLATIONS.en;
-    return currentDict[key] || TRANSLATIONS.en[key] || key;
+    return TRANSLATIONS.en[key] || key;
   };
 
   const saveFullDatabaseToCloud = async (currProjects, currInquiries, currStats) => {
@@ -542,8 +563,15 @@ export const PortfolioProvider = ({ children }) => {
           const data = await res.json();
           if (data) {
             if (Array.isArray(data.projects) && data.projects.length > 0) {
-              setProjects(data.projects);
-              localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(data.projects));
+              const mapped = data.projects.map(p => {
+                const matchingInitial = INITIAL_PROJECTS.find(init => init.title === p.title || init.id === p.id);
+                return {
+                  ...p,
+                  imageUrl: p.imageUrl || (matchingInitial ? matchingInitial.imageUrl : '')
+                };
+              });
+              setProjects(mapped);
+              localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(mapped));
             }
             if (Array.isArray(data.inquiries)) {
               setInquiries(data.inquiries);
@@ -669,73 +697,7 @@ export const PortfolioProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    const browserLang = (navigator.language || navigator.userLanguage || 'en-US').toLowerCase();
-    const foundLang = ALL_LANGUAGES.find(l => browserLang.startsWith(l.code));
-    if (foundLang) {
-      setLanguage(foundLang.code);
-      setDetectedLanguageLabel(`${foundLang.name} (${foundLang.code.toUpperCase()})`);
-    }
 
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-      let detectedTzCountry = 'Italy';
-
-      if (tz.includes('Rome') || tz.includes('Europe/Rome') || browserLang.startsWith('it')) {
-        setLanguage('it');
-        setCurrency('EUR');
-        detectedTzCountry = 'Italy';
-      } else if (tz.includes('Berlin') || tz.includes('Vienna') || tz.includes('Zurich') || browserLang.startsWith('de')) {
-        setLanguage('de');
-        setCurrency(tz.includes('Zurich') ? 'CHF' : 'EUR');
-        detectedTzCountry = tz.includes('Zurich') ? 'Switzerland' : 'Germany';
-      } else if (tz.includes('Paris') || tz.includes('Brussels') || browserLang.startsWith('fr')) {
-        setLanguage('fr');
-        setCurrency('EUR');
-        detectedTzCountry = 'France';
-      } else if (tz.includes('Madrid') || tz.includes('Mexico') || tz.includes('Buenos_Aires') || browserLang.startsWith('es')) {
-        setLanguage('es');
-        setCurrency(tz.includes('Mexico') ? 'MXN' : 'EUR');
-        detectedTzCountry = tz.includes('Mexico') ? 'Mexico' : 'Spain';
-      } else if (tz.includes('Kolkata') || browserLang.startsWith('hi')) {
-        setLanguage('hi');
-        setCurrency('INR');
-        detectedTzCountry = 'India';
-      } else if (tz.includes('London') || browserLang.startsWith('en-gb')) {
-        setLanguage('en');
-        setCurrency('GBP');
-        detectedTzCountry = 'United Kingdom';
-      } else if (tz.includes('New_York') || tz.includes('Chicago') || tz.includes('Denver') || tz.includes('Los_Angeles') || tz.includes('Toronto') || tz.includes('Sydney') || tz.includes('America') || tz.includes('Australia')) {
-        setLanguage('en');
-        setCurrency(tz.includes('Toronto') ? 'CAD' : tz.includes('Sydney') ? 'AUD' : 'USD');
-        detectedTzCountry = tz.includes('Toronto') ? 'Canada' : tz.includes('Sydney') ? 'Australia' : 'United States';
-      } else if (tz.includes('Tokyo') || browserLang.startsWith('ja')) {
-        setLanguage('ja');
-        setCurrency('JPY');
-        detectedTzCountry = 'Japan';
-      } else if (tz.includes('Shanghai') || browserLang.startsWith('zh')) {
-        setLanguage('zh');
-        setCurrency('CNY');
-        detectedTzCountry = 'China';
-      } else if (tz.includes('Moscow') || browserLang.startsWith('ru')) {
-        setLanguage('ru');
-        setCurrency('EUR');
-        detectedTzCountry = 'Russia';
-      } else if (tz.includes('Sao_Paulo') || browserLang.startsWith('pt')) {
-        setLanguage('pt');
-        setCurrency('BRL');
-        detectedTzCountry = 'Brazil';
-      } else {
-        setLanguage('en');
-        setCurrency('USD');
-        detectedTzCountry = 'United States';
-      }
-
-      setDetectedCountry(detectedTzCountry);
-    } catch (e) {
-      console.log('Local timezone lookup error');
-    }
-  }, []);
 
   useEffect(() => {
     const checkAdminRoute = () => {
@@ -763,10 +725,9 @@ export const PortfolioProvider = ({ children }) => {
   }, [isAdminLoggedIn]);
 
   const getFormattedPrice = (tierKey) => {
-    const baseEUR = BASE_RATES_EUR[tierKey] || 399;
-    const currObj = ALL_CURRENCIES.find(c => c.code === currency) || ALL_CURRENCIES[0];
-    const rawAmount = Math.round(baseEUR * currObj.rateMultiplier);
-    return `${currObj.symbol}${rawAmount.toLocaleString()}`;
+    if (tierKey === 'singlePage') return '€399';
+    if (tierKey === 'multiPageStandard') return '€899';
+    return '€1,499+';
   };
 
   const addProject = async (newProj) => {

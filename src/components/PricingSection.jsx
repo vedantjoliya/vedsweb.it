@@ -35,54 +35,7 @@ export const PricingSection = () => {
             {t('pricingSub')}
           </p>
 
-          {/* Location & Language Badges + Both Select Dropdowns */}
-          <div className="pt-3 flex flex-wrap items-center justify-center gap-3">
-            
-            {/* IP Country Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white border border-purple-200/80 text-xs font-semibold text-slate-800 shadow-sm">
-              <Globe className="w-3.5 h-3.5 text-[#8B5CF6]" />
-              <span>{t('locationDetected')} <strong className="text-slate-900 underline decoration-purple-300">{detectedCountry}</strong></span>
-            </div>
 
-            {/* Language Select Dropdown */}
-            <div className="relative inline-flex items-center">
-              <div className="absolute left-3 pointer-events-none text-[#FF5E7E]">
-                <Languages className="w-3.5 h-3.5" />
-              </div>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="appearance-none pl-8 pr-9 py-2 rounded-2xl bg-white border border-purple-200/80 text-xs font-bold text-slate-800 shadow-sm focus:outline-none focus:border-[#FF5E7E] cursor-pointer hover:bg-rose-50/50 transition-colors"
-              >
-                {allLanguages.map((l) => (
-                  <option key={l.code} value={l.code}>
-                    {l.flag} {l.name} ({l.code.toUpperCase()})
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-3 pointer-events-none" />
-            </div>
-
-            {/* Currency Select Dropdown */}
-            <div className="relative inline-flex items-center">
-              <div className="absolute left-3 pointer-events-none text-[#8B5CF6]">
-                <Globe className="w-3.5 h-3.5" />
-              </div>
-              <select
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-                className="appearance-none pl-8 pr-9 py-2 rounded-2xl bg-white border border-purple-200/80 text-xs font-bold text-slate-800 shadow-sm focus:outline-none focus:border-[#8B5CF6] cursor-pointer hover:bg-purple-50/50 transition-colors max-w-[240px]"
-              >
-                {allCurrencies.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.flag} {c.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-500 absolute right-3 pointer-events-none" />
-            </div>
-
-          </div>
         </div>
 
         {/* Pricing Cards Grid */}
