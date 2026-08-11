@@ -27,9 +27,21 @@ export const DeviceModal = () => {
         <div className="flex items-center justify-between gap-2 px-4 sm:px-6 py-3 border-b border-[#1E1B18]/10 bg-white shrink-0">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#8B5CF6]" />
-            <span className="text-[11px] font-mono-brutal font-medium text-[#1E1B18]/60 uppercase tracking-wider">
-              {selectedProject.title}
-            </span>
+            {selectedProject.demoUrl ? (
+              <a
+                href={selectedProject.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-[11px] font-mono-brutal font-semibold text-[#1E1B18]/60 hover:text-[#8B5CF6] transition-colors uppercase tracking-wider"
+              >
+                <span>{selectedProject.title}</span>
+                <ExternalLink className="w-3 h-3 text-[#8B5CF6]" />
+              </a>
+            ) : (
+              <span className="text-[11px] font-mono-brutal font-medium text-[#1E1B18]/60 uppercase tracking-wider">
+                {selectedProject.title}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
@@ -37,14 +49,6 @@ export const DeviceModal = () => {
               {zoomLevel < 1.3 ? <ZoomIn className="w-3.5 h-3.5" /> : <ZoomOut className="w-3.5 h-3.5" />}
               <span className="text-[11px] font-mono-brutal">{Math.round(zoomLevel * 100)}%</span>
             </button>
-
-            {selectedProject.demoUrl && (
-              <a href={selectedProject.demoUrl} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-1 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-[#1E1B18] text-white font-mono-brutal font-semibold text-xs hover:bg-[#8B5CF6] transition-colors">
-                <span className="text-[11px] sm:text-xs">visit live site</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            )}
 
             <button onClick={handleClose} className="p-1.5 sm:p-2 rounded-lg bg-[#1E1B18]/10 text-[#1E1B18] hover:bg-[#FF5E7E] hover:text-white transition-colors ml-1">
               <X className="w-4 h-4 sm:w-5 sm:h-5" />
