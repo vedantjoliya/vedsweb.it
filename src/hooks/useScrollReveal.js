@@ -16,6 +16,18 @@ export const useScrollReveal = () => {
 
     if (!targets.length) return;
 
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      targets.forEach((el) => {
+        el.classList.add('revealed');
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        el.style.animation = 'none';
+        el.style.transition = 'none';
+      });
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
