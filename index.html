@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#FDFBF7" />
     <title>VedsWeb Studio — Bespoke Web Design & Google Engineering Agency | Vedant Joliya</title>
 
     <!-- Primary SEO Optimization Engine -->
@@ -31,10 +33,24 @@
     <meta name="twitter:description" content="Bespoke Framer & React web applications, custom UI/UX design systems, and Google Search indexing by Vedant Joliya." />
     <meta name="twitter:image" content="https://i.postimg.cc/x1Gxw5Mz/logo-1.png" />
 
-    <!-- Typography Fonts Engine -->
+    <!-- Typography Fonts Engine (non-render-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://i.postimg.cc" crossorigin>
+    <!-- Load fonts with media=print trick: loads async, then swaps to 'all' without blocking render -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+      media="print"
+      onload="this.media='all'"
+    >
+    <!-- Noscript fallback for users without JS -->
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+      >
+    </noscript>
 
     <!-- Deep Semantic JSON-LD Hyper-Graph Mapping Agency & Vedant Joliya -->
     <script type="application/ld+json">

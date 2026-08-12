@@ -8,6 +8,7 @@ export const ProjectPreviewFrame = ({ imageUrl, title }) => {
         alt={title}
         className="w-full h-full object-cover transform scale-100 group-hover:scale-[1.03] transition-transform duration-700 ease-out"
         loading="lazy"
+        decoding="async"
       />
     </div>
   );

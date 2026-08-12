@@ -374,6 +374,8 @@ export const AdminModal = () => {
                           src={proj.imageUrl}
                           alt={proj.title}
                           className="w-12 h-12 rounded-lg object-cover border border-slate-200"
+                          loading="lazy"
+                          decoding="async"
                         />
                       )}
                       <div>
