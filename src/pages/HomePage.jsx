@@ -100,7 +100,7 @@ export const HomePage = () => {
 
       {/* FEATURED WORK */}
       <section className="py-24 max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
-        
+
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16">
           <div className="reveal-left text-left">
             <div className="text-[11px] font-body font-bold text-[#8B5CF6] uppercase tracking-[0.2em] mb-3">
@@ -117,53 +117,64 @@ export const HomePage = () => {
           </Link>
         </div>
 
-        <div className="space-y-20">
-          {projects.length === 0 ? (
-            <div className="reveal text-center py-16 px-6 bg-white border border-[#1A1816]/10 rounded-3xl">
-              <p className="text-lg text-[#706B65] font-body">No projects added yet.</p>
-            </div>
-          ) : (
-            projects.slice(0, 4).map((project, idx) => (
+        {projects.length === 0 ? (
+          <div className="reveal text-center py-16 px-6 bg-white border border-[#1A1816]/10 rounded-3xl">
+            <p className="text-lg text-[#706B65] font-body">No projects added yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-16">
+            {projects.slice(0, 4).map((project, idx) => (
               <div
                 key={project.id}
-                className={`reveal ${idx > 0 ? `delay-${idx}00` : ''} group text-left`}
+                className={`reveal ${idx > 0 ? `delay-${Math.min(idx, 5)}00` : ''} group text-left flex flex-col`}
               >
+                {/* Thumbnail — click opens preview popup */}
                 <div
-                  className="relative rounded-2xl overflow-hidden bg-white border border-[#1A1816]/10 aspect-[16/10] sm:aspect-video cursor-pointer shadow-vj-md shadow-vj-hover"
+                  className="relative rounded-2xl overflow-hidden bg-white border border-[#1A1816]/10 aspect-[16/10] cursor-pointer shadow-vj-md shadow-vj-hover"
                   onClick={() => setSelectedProject(project)}
                 >
                   <ProjectPreviewFrame imageUrl={project.imageUrl} title={project.title} />
-
-                  <div className="absolute inset-0 bg-[#1A1816]/0 hover:bg-[#1A1816]/20 group-hover:bg-[#1A1816]/20 transition-all duration-500 flex items-center justify-center pointer-events-none">
-                    <div className="opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 transition-all duration-300 flex items-center gap-3 pointer-events-auto">
-                      <button className="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-[#1A1816] font-semibold text-xs hover:scale-105 transition-transform uppercase shadow-xl font-body tracking-wider">
-                        <Eye className="w-4 h-4 text-[#8B5CF6]" />
-                        <span>{t('preview')}</span>
-                      </button>
-                      <a
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-2 px-5 py-3 rounded-full bg-[#1A1816] text-white text-xs font-medium hover:bg-[#8B5CF6] transition-colors uppercase shadow-xl font-body tracking-wider"
-                      >
-                        <span>{t('liveSite')}</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
+                  {/* Subtle eye-hint overlay on hover */}
+                  <div className="absolute inset-0 bg-[#1A1816]/0 hover:bg-[#1A1816]/20 transition-all duration-400 flex items-center justify-center pointer-events-none">
+                    <div className="opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                      <Eye className="w-9 h-9 text-white drop-shadow-xl" />
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-6">
-                  <h3 className="text-2xl sm:text-4xl font-display font-medium text-[#1A1816]">
-                    {project.title}
-                  </h3>
-                  <p className="text-xs text-[#706B65] mt-1 font-medium">{project.category || 'Framer Web Application'}</p>
+                {/* Title + always-visible action buttons */}
+                <div className="mt-5 flex items-start justify-between gap-3 flex-wrap sm:flex-nowrap">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-2xl sm:text-3xl font-display font-medium text-[#1A1816] leading-tight">
+                      {project.title}
+                    </h3>
+                    <p className="text-xs text-[#706B65] mt-1 font-medium">{project.category || 'Framer Web Application'}</p>
+                  </div>
+
+                  {/* Preview + Live Site buttons — always visible beside title */}
+                  <div className="flex items-center gap-2 shrink-0 pt-0.5">
+                    <button
+                      onClick={() => setSelectedProject(project)}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white border border-[#1A1816]/15 text-[#1A1816] font-semibold text-[11px] hover:border-[#8B5CF6] hover:text-[#8B5CF6] transition-all duration-200 uppercase tracking-wider shadow-sm whitespace-nowrap"
+                    >
+                      <Eye className="w-3.5 h-3.5 text-[#8B5CF6]" />
+                      <span>{t('preview')}</span>
+                    </button>
+                    <a
+                      href={project.demoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1A1816] text-white text-[11px] font-semibold hover:bg-[#8B5CF6] transition-all duration-200 uppercase tracking-wider shadow-sm whitespace-nowrap"
+                    >
+                      <span>{t('liveSite')}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* CTA BANNER */}
