@@ -42,7 +42,6 @@ export const Navbar = () => {
 
           {/* Desktop Nav Links */}
           <nav className="hidden lg:flex items-center gap-10">
-            <NavLink to="/" className={navLinkClass} end>{t('navHome')}</NavLink>
             <NavLink to="/work" className={navLinkClass}>{t('navWork')}</NavLink>
             <NavLink to="/services" className={navLinkClass}>{t('navServices')}</NavLink>
             <NavLink to="/pricing" className={navLinkClass}>{t('navPricing')}</NavLink>
@@ -84,7 +83,6 @@ export const Navbar = () => {
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#FDFBF7]/95 backdrop-blur-xl border-t border-[#1A1816]/10 px-6 py-8 space-y-6 animate-fadeIn text-left">
           <nav className="flex flex-col gap-4 text-3xl font-display font-medium">
-            <NavLink to="/" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => isActive ? 'text-[#1A1816]' : 'text-[#1A1816]/50 hover:text-[#1A1816]'}>{t('navHome')}</NavLink>
             <NavLink to="/work" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => isActive ? 'text-[#1A1816]' : 'text-[#1A1816]/50 hover:text-[#1A1816]'}>{t('navWork')}</NavLink>
             <NavLink to="/services" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => isActive ? 'text-[#1A1816]' : 'text-[#1A1816]/50 hover:text-[#1A1816]'}>{t('navServices')}</NavLink>
             <NavLink to="/pricing" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => isActive ? 'text-[#1A1816]' : 'text-[#1A1816]/50 hover:text-[#1A1816]'}>{t('navPricing')}</NavLink>
