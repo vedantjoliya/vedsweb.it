@@ -486,21 +486,7 @@ const INITIAL_PROJECTS = [
   }
 ];
 
-const GET_PRIMARY_CLOUD_URL = () => {
-  if (import.meta.env && import.meta.env.VITE_CLOUD_API_URL) {
-    return import.meta.env.VITE_CLOUD_API_URL;
-  }
-  return '/api/cloud-db';
-};
-
-const GET_CLOUD_HEADERS = () => {
-  const headers = { 'Content-Type': 'application/json' };
-  if (import.meta.env && import.meta.env.VITE_CLOUD_API_KEY) {
-    headers['X-Master-Key'] = import.meta.env.VITE_CLOUD_API_KEY;
-    headers['X-Access-Key'] = import.meta.env.VITE_CLOUD_API_KEY;
-  }
-  return headers;
-};
+const CLOUD_API_URL = 'https://jsonblob.com/api/jsonBlob/019feb12-c5cf-7487-aaff-4a8150bc05ad';
 
 export const PortfolioProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
@@ -551,49 +537,30 @@ export const PortfolioProvider = ({ children }) => {
 
   const saveFullDatabaseToCloud = async (currProjects, currInquiries, currStats) => {
     setIsCloudSyncing(true);
-    const payload = {
-      projects: currProjects,
-      inquiries: currInquiries,
-      stats: currStats,
-      lastUpdated: Date.now()
-    };
-
-    const endpoints = [GET_PRIMARY_CLOUD_URL()];
-    if (import.meta.env && import.meta.env.VITE_CLOUD_API_URL && !endpoints.includes('/api/cloud-db')) {
-      endpoints.push('/api/cloud-db');
+    try {
+      const payload = {
+        projects: currProjects,
+        inquiries: currInquiries,
+        stats: currStats
+      };
+      await fetch(CLOUD_API_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (err) {
+      console.log('Cloud server save error');
+    } finally {
+      setIsCloudSyncing(false);
     }
-
-    for (const url of endpoints) {
-      try {
-        const res = await fetch(url, {
-          method: 'PUT',
-          headers: GET_CLOUD_HEADERS(),
-          body: JSON.stringify(payload)
-        });
-        if (res.ok) {
-          setIsCloudSyncing(false);
-          return;
-        }
-      } catch (err) {
-        console.log(`Cloud sync notice for ${url}`);
-      }
-    }
-    setIsCloudSyncing(false);
   };
 
-  const fetchCloudDatabase = async () => {
-    const endpoints = [GET_PRIMARY_CLOUD_URL()];
-    if (import.meta.env && import.meta.env.VITE_CLOUD_API_URL && !endpoints.includes('/api/cloud-db')) {
-      endpoints.push('/api/cloud-db');
-    }
-
-    for (const url of endpoints) {
+  useEffect(() => {
+    const fetchCloudDatabase = async () => {
       try {
-        const res = await fetch(url, { headers: GET_CLOUD_HEADERS() });
+        const res = await fetch(CLOUD_API_URL);
         if (res.ok) {
-          const rawData = await res.json();
-          const data = rawData?.record || rawData?.data || rawData;
-
+          const data = await res.json();
           if (data) {
             if (Array.isArray(data.projects) && data.projects.length > 0) {
               const mapped = data.projects.map(p => {
@@ -606,12 +573,10 @@ export const PortfolioProvider = ({ children }) => {
               setProjects(mapped);
               localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(mapped));
             }
-
             if (Array.isArray(data.inquiries)) {
               setInquiries(data.inquiries);
               localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(data.inquiries));
             }
-
             if (data.stats) {
               const hasVisitedSession = sessionStorage.getItem('vedsweb_device_session_visited');
               let viewsCount = data.stats.pageViews || 0;
@@ -636,22 +601,13 @@ export const PortfolioProvider = ({ children }) => {
                 saveFullDatabaseToCloud(data.projects || projects, data.inquiries || inquiries, newStats);
               }
             }
-            return;
           }
         }
       } catch (err) {
-        console.log(`Cloud fetch notice for ${url}`);
+        console.log('Cloud database fetch error');
       }
-    }
-  };
-
-  useEffect(() => {
+    };
     fetchCloudDatabase();
-    // Live background cloud refresh every 15s to keep all devices synced in real-time
-    const timer = setInterval(() => {
-      fetchCloudDatabase();
-    }, 15000);
-    return () => clearInterval(timer);
   }, []);
 
   const recordContactClick = () => {
