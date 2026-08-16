@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db, isConfigured } from '../firebase';
 
 const PortfolioContext = createContext();
 
@@ -486,7 +488,9 @@ const INITIAL_PROJECTS = [
   }
 ];
 
-const CLOUD_API_URL = 'https://jsonblob.com/api/jsonBlob/019feb12-c5cf-7487-aaff-4a8150bc05ad';
+// ─── Firestore document reference ───────────────────────────────
+// All site data lives in a single Firestore document: vedsweb/data
+const getCloudDocRef = () => isConfigured ? doc(db, 'vedsweb', 'data') : null;
 
 export const PortfolioProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
@@ -535,78 +539,96 @@ export const PortfolioProvider = ({ children }) => {
     return TRANSLATIONS.en[key] || key;
   };
 
+  // ── Write entire database state to Firestore ──────────────────
   const saveFullDatabaseToCloud = async (currProjects, currInquiries, currStats) => {
+    if (!isConfigured) return; // Firebase not set up yet — skip silently
     setIsCloudSyncing(true);
     try {
-      const payload = {
-        projects: currProjects,
+      const ref = getCloudDocRef();
+      await setDoc(ref, {
+        projects:  currProjects,
         inquiries: currInquiries,
-        stats: currStats
-      };
-      await fetch(CLOUD_API_URL, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        stats:     currStats,
+        updatedAt: new Date().toISOString()
       });
     } catch (err) {
-      console.log('Cloud server save error');
+      console.warn('[VedsWeb] Firestore write error:', err.message);
     } finally {
       setIsCloudSyncing(false);
     }
   };
 
+  // ── Read database from Firestore on first load ────────────────
   useEffect(() => {
+    if (!isConfigured) {
+      // Firebase not configured — site still works from localStorage / defaults
+      console.info('[VedsWeb] Firebase not configured. Using local data.');
+      return;
+    }
+
     const fetchCloudDatabase = async () => {
       try {
-        const res = await fetch(CLOUD_API_URL);
-        if (res.ok) {
-          const data = await res.json();
-          if (data) {
-            if (Array.isArray(data.projects) && data.projects.length > 0) {
-              const mapped = data.projects.map(p => {
-                const matchingInitial = INITIAL_PROJECTS.find(init => init.title === p.title || init.id === p.id);
-                return {
-                  ...p,
-                  imageUrl: p.imageUrl || (matchingInitial ? matchingInitial.imageUrl : '')
-                };
-              });
-              setProjects(mapped);
-              localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(mapped));
-            }
-            if (Array.isArray(data.inquiries)) {
-              setInquiries(data.inquiries);
-              localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(data.inquiries));
-            }
-            if (data.stats) {
-              const hasVisitedSession = sessionStorage.getItem('vedsweb_device_session_visited');
-              let viewsCount = data.stats.pageViews || 0;
-              let isNewSession = false;
+        const ref  = getCloudDocRef();
+        const snap = await getDoc(ref);
 
-              if (!hasVisitedSession) {
-                viewsCount += 1;
-                sessionStorage.setItem('vedsweb_device_session_visited', 'true');
-                isNewSession = true;
-              }
+        if (!snap.exists()) {
+          // First ever visit — seed Firestore with the default projects
+          await saveFullDatabaseToCloud(INITIAL_PROJECTS, [], { pageViews: 1, contactClicks: 0, totalInquiries: 0, activeVisitors: 1 });
+          return;
+        }
 
-              const newStats = {
-                pageViews: viewsCount,
-                contactClicks: data.stats.contactClicks || 0,
-                totalInquiries: Array.isArray(data.inquiries) ? data.inquiries.length : (inquiries?.length || 0),
-                activeVisitors: Math.max(1, data.stats.activeVisitors || 1)
-              };
+        const data = snap.data();
 
-              setStats(newStats);
+        if (Array.isArray(data.projects) && data.projects.length > 0) {
+          const mapped = data.projects.map(p => {
+            const matchingInitial = INITIAL_PROJECTS.find(init => init.title === p.title || init.id === p.id);
+            return {
+              ...p,
+              imageUrl: p.imageUrl || (matchingInitial ? matchingInitial.imageUrl : '')
+            };
+          });
+          setProjects(mapped);
+          localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(mapped));
+        }
 
-              if (isNewSession) {
-                saveFullDatabaseToCloud(data.projects || projects, data.inquiries || inquiries, newStats);
-              }
-            }
+        if (Array.isArray(data.inquiries)) {
+          setInquiries(data.inquiries);
+          localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(data.inquiries));
+        }
+
+        if (data.stats) {
+          const hasVisitedSession = sessionStorage.getItem('vedsweb_device_session_visited');
+          let viewsCount = data.stats.pageViews || 0;
+          let isNewSession = false;
+
+          if (!hasVisitedSession) {
+            viewsCount += 1;
+            sessionStorage.setItem('vedsweb_device_session_visited', 'true');
+            isNewSession = true;
+          }
+
+          const newStats = {
+            pageViews:      viewsCount,
+            contactClicks:  data.stats.contactClicks || 0,
+            totalInquiries: Array.isArray(data.inquiries) ? data.inquiries.length : 0,
+            activeVisitors: Math.max(1, data.stats.activeVisitors || 1)
+          };
+          setStats(newStats);
+
+          if (isNewSession) {
+            // Persist the incremented page view back to Firestore
+            saveFullDatabaseToCloud(
+              Array.isArray(data.projects) ? data.projects : INITIAL_PROJECTS,
+              Array.isArray(data.inquiries) ? data.inquiries : [],
+              newStats
+            );
           }
         }
       } catch (err) {
-        console.log('Cloud database fetch error');
+        console.warn('[VedsWeb] Firestore read error:', err.message);
       }
     };
+
     fetchCloudDatabase();
   }, []);
 
