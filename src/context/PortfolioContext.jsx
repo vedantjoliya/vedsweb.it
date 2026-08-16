@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 const PortfolioContext = createContext();
 
@@ -541,15 +542,21 @@ export const PortfolioProvider = ({ children }) => {
       const payload = {
         projects: currProjects,
         inquiries: currInquiries,
-        stats: currStats
+        stats: currStats,
+        updated_at: new Date().toISOString()
       };
-      await fetch(CLOUD_API_URL, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+
+      if (isSupabaseConfigured && supabase) {
+        const { error } = await supabase
+          .from('vedsweb_store')
+          .upsert({ id: 'global_state', data: payload }, { onConflict: 'id' });
+
+        if (error) {
+          console.warn('Supabase sync warning:', error.message);
+        }
+      }
     } catch (err) {
-      console.log('Cloud server save error');
+      console.warn('Cloud database save error:', err);
     } finally {
       setIsCloudSyncing(false);
     }
@@ -557,54 +564,59 @@ export const PortfolioProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchCloudDatabase = async () => {
+      if (!isSupabaseConfigured || !supabase) return;
+
       try {
-        const res = await fetch(CLOUD_API_URL);
-        if (res.ok) {
-          const data = await res.json();
-          if (data) {
-            if (Array.isArray(data.projects) && data.projects.length > 0) {
-              const mapped = data.projects.map(p => {
-                const matchingInitial = INITIAL_PROJECTS.find(init => init.title === p.title || init.id === p.id);
-                return {
-                  ...p,
-                  imageUrl: p.imageUrl || (matchingInitial ? matchingInitial.imageUrl : '')
-                };
-              });
-              setProjects(mapped);
-              localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(mapped));
-            }
-            if (Array.isArray(data.inquiries)) {
-              setInquiries(data.inquiries);
-              localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(data.inquiries));
-            }
-            if (data.stats) {
-              const hasVisitedSession = sessionStorage.getItem('vedsweb_device_session_visited');
-              let viewsCount = data.stats.pageViews || 0;
-              let isNewSession = false;
+        const { data, error } = await supabase
+          .from('vedsweb_store')
+          .select('data')
+          .eq('id', 'global_state')
+          .maybeSingle();
 
-              if (!hasVisitedSession) {
-                viewsCount += 1;
-                sessionStorage.setItem('vedsweb_device_session_visited', 'true');
-                isNewSession = true;
-              }
-
-              const newStats = {
-                pageViews: viewsCount,
-                contactClicks: data.stats.contactClicks || 0,
-                totalInquiries: Array.isArray(data.inquiries) ? data.inquiries.length : (inquiries?.length || 0),
-                activeVisitors: Math.max(1, data.stats.activeVisitors || 1)
+        if (!error && data?.data) {
+          const cloudData = data.data;
+          if (Array.isArray(cloudData.projects) && cloudData.projects.length > 0) {
+            const mapped = cloudData.projects.map(p => {
+              const matchingInitial = INITIAL_PROJECTS.find(init => init.title === p.title || init.id === p.id);
+              return {
+                ...p,
+                imageUrl: p.imageUrl || (matchingInitial ? matchingInitial.imageUrl : '')
               };
+            });
+            setProjects(mapped);
+            localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(mapped));
+          }
+          if (Array.isArray(cloudData.inquiries)) {
+            setInquiries(cloudData.inquiries);
+            localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(cloudData.inquiries));
+          }
+          if (cloudData.stats) {
+            const hasVisitedSession = sessionStorage.getItem('vedsweb_device_session_visited');
+            let viewsCount = cloudData.stats.pageViews || 0;
+            let isNewSession = false;
 
-              setStats(newStats);
+            if (!hasVisitedSession) {
+              viewsCount += 1;
+              sessionStorage.setItem('vedsweb_device_session_visited', 'true');
+              isNewSession = true;
+            }
 
-              if (isNewSession) {
-                saveFullDatabaseToCloud(data.projects || projects, data.inquiries || inquiries, newStats);
-              }
+            const newStats = {
+              pageViews: viewsCount,
+              contactClicks: cloudData.stats.contactClicks || 0,
+              totalInquiries: Array.isArray(cloudData.inquiries) ? cloudData.inquiries.length : (inquiries?.length || 0),
+              activeVisitors: Math.max(1, cloudData.stats.activeVisitors || 1)
+            };
+
+            setStats(newStats);
+
+            if (isNewSession) {
+              saveFullDatabaseToCloud(cloudData.projects || projects, cloudData.inquiries || inquiries, newStats);
             }
           }
         }
       } catch (err) {
-        console.log('Cloud database fetch error');
+        console.warn('Cloud database fetch error:', err);
       }
     };
     fetchCloudDatabase();
