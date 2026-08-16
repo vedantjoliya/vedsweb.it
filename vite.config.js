@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  envPrefix: ['VITE_', 'NEXT_PUBLIC_', 'SUPABASE_'],
 
   build: {
     // Use oxc (Rolldown's built-in minifier, Vite 8 default) — no separate install needed
