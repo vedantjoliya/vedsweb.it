@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { db, isConfigured } from '../firebase';
 
 const PortfolioContext = createContext();
 
@@ -488,9 +486,21 @@ const INITIAL_PROJECTS = [
   }
 ];
 
-// ─── Firestore document reference ───────────────────────────────
-// All site data lives in a single Firestore document: vedsweb/data
-const getCloudDocRef = () => isConfigured ? doc(db, 'vedsweb', 'data') : null;
+const GET_PRIMARY_CLOUD_URL = () => {
+  if (import.meta.env && import.meta.env.VITE_CLOUD_API_URL) {
+    return import.meta.env.VITE_CLOUD_API_URL;
+  }
+  return '/api/cloud-db';
+};
+
+const GET_CLOUD_HEADERS = () => {
+  const headers = { 'Content-Type': 'application/json' };
+  if (import.meta.env && import.meta.env.VITE_CLOUD_API_KEY) {
+    headers['X-Master-Key'] = import.meta.env.VITE_CLOUD_API_KEY;
+    headers['X-Access-Key'] = import.meta.env.VITE_CLOUD_API_KEY;
+  }
+  return headers;
+};
 
 export const PortfolioProvider = ({ children }) => {
   const [projects, setProjects] = useState(() => {
@@ -539,97 +549,109 @@ export const PortfolioProvider = ({ children }) => {
     return TRANSLATIONS.en[key] || key;
   };
 
-  // ── Write entire database state to Firestore ──────────────────
   const saveFullDatabaseToCloud = async (currProjects, currInquiries, currStats) => {
-    if (!isConfigured) return; // Firebase not set up yet — skip silently
     setIsCloudSyncing(true);
-    try {
-      const ref = getCloudDocRef();
-      await setDoc(ref, {
-        projects:  currProjects,
-        inquiries: currInquiries,
-        stats:     currStats,
-        updatedAt: new Date().toISOString()
-      });
-    } catch (err) {
-      console.warn('[VedsWeb] Firestore write error:', err.message);
-    } finally {
-      setIsCloudSyncing(false);
-    }
-  };
+    const payload = {
+      projects: currProjects,
+      inquiries: currInquiries,
+      stats: currStats,
+      lastUpdated: Date.now()
+    };
 
-  // ── Read database from Firestore on first load ────────────────
-  useEffect(() => {
-    if (!isConfigured) {
-      // Firebase not configured — site still works from localStorage / defaults
-      console.info('[VedsWeb] Firebase not configured. Using local data.');
-      return;
+    const endpoints = [GET_PRIMARY_CLOUD_URL()];
+    if (import.meta.env && import.meta.env.VITE_CLOUD_API_URL && !endpoints.includes('/api/cloud-db')) {
+      endpoints.push('/api/cloud-db');
     }
 
-    const fetchCloudDatabase = async () => {
+    for (const url of endpoints) {
       try {
-        const ref  = getCloudDocRef();
-        const snap = await getDoc(ref);
-
-        if (!snap.exists()) {
-          // First ever visit — seed Firestore with the default projects
-          await saveFullDatabaseToCloud(INITIAL_PROJECTS, [], { pageViews: 1, contactClicks: 0, totalInquiries: 0, activeVisitors: 1 });
+        const res = await fetch(url, {
+          method: 'PUT',
+          headers: GET_CLOUD_HEADERS(),
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+          setIsCloudSyncing(false);
           return;
         }
+      } catch (err) {
+        console.log(`Cloud sync notice for ${url}`);
+      }
+    }
+    setIsCloudSyncing(false);
+  };
 
-        const data = snap.data();
+  const fetchCloudDatabase = async () => {
+    const endpoints = [GET_PRIMARY_CLOUD_URL()];
+    if (import.meta.env && import.meta.env.VITE_CLOUD_API_URL && !endpoints.includes('/api/cloud-db')) {
+      endpoints.push('/api/cloud-db');
+    }
 
-        if (Array.isArray(data.projects) && data.projects.length > 0) {
-          const mapped = data.projects.map(p => {
-            const matchingInitial = INITIAL_PROJECTS.find(init => init.title === p.title || init.id === p.id);
-            return {
-              ...p,
-              imageUrl: p.imageUrl || (matchingInitial ? matchingInitial.imageUrl : '')
-            };
-          });
-          setProjects(mapped);
-          localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(mapped));
-        }
+    for (const url of endpoints) {
+      try {
+        const res = await fetch(url, { headers: GET_CLOUD_HEADERS() });
+        if (res.ok) {
+          const rawData = await res.json();
+          const data = rawData?.record || rawData?.data || rawData;
 
-        if (Array.isArray(data.inquiries)) {
-          setInquiries(data.inquiries);
-          localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(data.inquiries));
-        }
+          if (data) {
+            if (Array.isArray(data.projects) && data.projects.length > 0) {
+              const mapped = data.projects.map(p => {
+                const matchingInitial = INITIAL_PROJECTS.find(init => init.title === p.title || init.id === p.id);
+                return {
+                  ...p,
+                  imageUrl: p.imageUrl || (matchingInitial ? matchingInitial.imageUrl : '')
+                };
+              });
+              setProjects(mapped);
+              localStorage.setItem('vedsweb_admin_projects_v6', JSON.stringify(mapped));
+            }
 
-        if (data.stats) {
-          const hasVisitedSession = sessionStorage.getItem('vedsweb_device_session_visited');
-          let viewsCount = data.stats.pageViews || 0;
-          let isNewSession = false;
+            if (Array.isArray(data.inquiries)) {
+              setInquiries(data.inquiries);
+              localStorage.setItem('vedsweb_admin_inquiries_v1', JSON.stringify(data.inquiries));
+            }
 
-          if (!hasVisitedSession) {
-            viewsCount += 1;
-            sessionStorage.setItem('vedsweb_device_session_visited', 'true');
-            isNewSession = true;
-          }
+            if (data.stats) {
+              const hasVisitedSession = sessionStorage.getItem('vedsweb_device_session_visited');
+              let viewsCount = data.stats.pageViews || 0;
+              let isNewSession = false;
 
-          const newStats = {
-            pageViews:      viewsCount,
-            contactClicks:  data.stats.contactClicks || 0,
-            totalInquiries: Array.isArray(data.inquiries) ? data.inquiries.length : 0,
-            activeVisitors: Math.max(1, data.stats.activeVisitors || 1)
-          };
-          setStats(newStats);
+              if (!hasVisitedSession) {
+                viewsCount += 1;
+                sessionStorage.setItem('vedsweb_device_session_visited', 'true');
+                isNewSession = true;
+              }
 
-          if (isNewSession) {
-            // Persist the incremented page view back to Firestore
-            saveFullDatabaseToCloud(
-              Array.isArray(data.projects) ? data.projects : INITIAL_PROJECTS,
-              Array.isArray(data.inquiries) ? data.inquiries : [],
-              newStats
-            );
+              const newStats = {
+                pageViews: viewsCount,
+                contactClicks: data.stats.contactClicks || 0,
+                totalInquiries: Array.isArray(data.inquiries) ? data.inquiries.length : (inquiries?.length || 0),
+                activeVisitors: Math.max(1, data.stats.activeVisitors || 1)
+              };
+
+              setStats(newStats);
+
+              if (isNewSession) {
+                saveFullDatabaseToCloud(data.projects || projects, data.inquiries || inquiries, newStats);
+              }
+            }
+            return;
           }
         }
       } catch (err) {
-        console.warn('[VedsWeb] Firestore read error:', err.message);
+        console.log(`Cloud fetch notice for ${url}`);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchCloudDatabase();
+    // Live background cloud refresh every 15s to keep all devices synced in real-time
+    const timer = setInterval(() => {
+      fetchCloudDatabase();
+    }, 15000);
+    return () => clearInterval(timer);
   }, []);
 
   const recordContactClick = () => {
