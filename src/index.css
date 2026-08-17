@@ -39,6 +39,13 @@
     -webkit-backdrop-filter: blur(24px);
   }
 
+  /* Hardware acceleration & Mobile Performance Utilities */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+  }
+
   /* Soft Ambient Shadows */
   .shadow-vj-glow {
     box-shadow: 0 16px 48px -12px rgba(139, 92, 246, 0.12);
@@ -56,6 +63,12 @@
     transform: translateY(-4px);
     box-shadow: 0 20px 40px -10px rgba(26, 24, 22, 0.1);
   }
+}
+
+/* Eliminate tap delay on mobile touch devices */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ========================= */
