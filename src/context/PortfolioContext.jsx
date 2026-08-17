@@ -774,7 +774,7 @@ export const PortfolioProvider = ({ children }) => {
   const contactInfo = {
     phone: '+39 3516785413',
     phoneFormatted: '+39 3516785413',
-    email: 'contactsvedant@gmail.com',
+    email: 'contact@vedsweb.it',
     location: 'Parma, Emilia-Romagna, Italy'
   };
 

@@ -93,6 +93,6 @@ vedsweb/
 
 - **Studio**: VedsWeb Studio by Vedant Joliya
 - **Location**: Parma, Emilia-Romagna, Italy
-- **Email**: [contactsvedant@gmail.com](mailto:contactsvedant@gmail.com)
+- **Email**: [contact@vedsweb.it](mailto:contact@vedsweb.it)
 - **Phone**: [+39 3516785413](tel:+393516785413)
 - **Website**: [https://vedsweb.it](https://vedsweb.it)

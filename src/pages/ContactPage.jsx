@@ -28,7 +28,7 @@ export const ContactPage = () => {
 
     const subject = encodeURIComponent(`VedsWeb Project Inquiry: ${formData.projectType} from ${formData.name}`);
     const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\nProject: ${formData.projectType}\nBudget: ${formData.budget}\nCurrency: ${currency}\n\nBrief:\n${formData.message}`);
-    window.location.href = `mailto:contactsvedant@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:contact@vedsweb.it?subject=${subject}&body=${body}`;
     setSubmitted(true);
   };
 

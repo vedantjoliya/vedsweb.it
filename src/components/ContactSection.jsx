@@ -24,7 +24,7 @@ export const ContactSection = () => {
       `Name: ${formData.name}\nEmail: ${formData.email}\nProject Type: ${formData.projectType}\nBudget Tier: ${formData.budget}\nCurrency: ${currency}\n\nProject Brief:\n${formData.message}`
     );
     
-    window.location.href = `mailto:contactsvedant@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:contact@vedsweb.it?subject=${subject}&body=${body}`;
     setSubmitted(true);
   };
 

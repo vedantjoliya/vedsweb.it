@@ -70,7 +70,7 @@ async function buildPDF() {
   doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text('+39 3516785413', 185, 390, { link: 'tel:+393516785413' });
 
   doc.fillColor('#71717A').fontSize(7.5).font('Helvetica-Bold').text('EMAIL ADDRESS', 345, 378);
-  doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text('contactsvedant@gmail.com', 345, 390, { link: 'mailto:contactsvedant@gmail.com' });
+  doc.fillColor('#8B5CF6').fontSize(9.5).font('Helvetica-Bold').text('contact@vedsweb.it', 345, 390, { link: 'mailto:contact@vedsweb.it' });
 
   // Structured Metadata Row 2
   doc.fillColor('#71717A').fontSize(7.5).font('Helvetica-Bold').text('OFFICIAL PORTFOLIO WEBSITE', 65, 412);
